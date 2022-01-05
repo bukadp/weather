@@ -8,13 +8,15 @@ let btn_deletes = document.querySelectorAll(".row__right-close");
 const UI_FORM_SEARCH = document.querySelectorAll(".search__city");
 let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
-
+// НЕКОРРЕКТНО РАБОТАЕТ
 window.onload = function (){
   let cityName = localStorage.getItem("CurrentCity");
   if (!!cityName){
     fetchWeather (cityName);
+    fetchForecast(cityName);
   } 
   fetchWeather ("Dnipro");
+  fetchForecast("Dnipro");
 }
 
 
@@ -89,28 +91,37 @@ function fetchForecast(cityName){
     let resultForecastCity = document.querySelector(".tabcontent-forecast-city");
     resultForecastCity.innerHTML = `${data.city.name}`;
 
+    handlerRender(data.list);
+  })
+  
+}
+
+function handlerRender(forecastList){
+  
+
+  
+  forecastList.forEach(function(el){
+    
     let resultForecastDay = document.querySelector(".tabcontent-forecast-info-box-day"); 
-    resultForecastDay.innerHTML = `${data.list[0].dt}`;
-
+    resultForecastDay.innerHTML = `${el.dt}`;
+  
     let resultForecastTime = document.querySelector(".tabcontent-forecast-info-box-time"); 
-    resultForecastTime.innerHTML = `${data.list[0].dt}`;
-
+    resultForecastTime.innerHTML = `${el.dt}`;
+  
     let resultForecastTemp = document.querySelector(".tabcontent-forecast-info-box-temperature>span"); 
-    let numberTemp = +`${data.list[0].main.temp}`;
+    let numberTemp = +`${el.main.temp}`;
     resultForecastTemp.innerHTML = Math.round(numberTemp-273);
-
+  
     let resultForecastFeelsLikeTemp = document.querySelector(".tabcontent-forecast-info-box-feels>span"); 
-    let numberFeelsLikeTemp = +`${data.list[0].main.feels_like}`;
+    let numberFeelsLikeTemp = +`${el.main.feels_like}`;
     resultForecastFeelsLikeTemp.innerHTML = Math.round(numberFeelsLikeTemp-273);
-
-
+  
     let resultForecastDescription = document.querySelector(".tabcontent-forecast-info-box-ico-name");
-    let resultForecastDescriptionValue = `${data.list[0].weather[0].main}`;
+    let resultForecastDescriptionValue = `${el.weather[0].main}`;
     resultForecastDescription.innerHTML = `${resultForecastDescriptionValue[0].toUpperCase()}${resultForecastDescriptionValue.slice(1)}`;
-
-
+  
     let resultNowIco = document.querySelector(".tabcontent-forecast-info-box-ico-icon"); 
-    let icoNumber = `${data.list[0].weather[0].icon}`;
+    let icoNumber = `${el.weather[0].icon}`;
     let ico = document.createElement('img');
     ico.src = `${serverIcoUrl}${icoNumber}.png`;
         
@@ -118,8 +129,37 @@ function fetchForecast(cityName){
     let resultNowIcoFirst = document.querySelector(".tabcontent-forecast-info-box-ico-icon>img"); 
     resultNowIcoFirst.remove();
 
+    renderForecast(el);
+
   })
+}
+
+
+
+function renderForecast(forecastList){
   
+  let today = document.getElementById("today");
+
+  today.insertAdjacentHTML('afterend', `
+  <div class="tabcontent-forecast-info-box" id="today">
+  <div class="tabcontent-forecast-info-box-day-time">
+      <div class="tabcontent-forecast-info-box-day">${forecastList.dt}</div>
+      <div class="tabcontent-forecast-info-box-time">12:00!!!</div>
+  </div>
+  <div class="tabcontent-forecast-info-box-temp-ico">
+      <div class="tabcontent-forecast-info-box-temp">
+          <div class="tabcontent-forecast-info-box-temperature">Temperature: <span>13</span>&#176;</div>
+          <div class="tabcontent-forecast-info-box-feels">Feels like: <span>10</span>&#176;</div>
+      </div>
+      <div class="tabcontent-forecast-info-box-ico">
+          <div class="tabcontent-forecast-info-box-ico-name">Rain</div>
+          <div class="tabcontent-forecast-info-box-ico-icon box-ico" id="firstBoxIco"><img src="/icons/icon-rain.svg" alt="weather"></div>
+      </div>
+  </div>
+</div>
+  `);
+
+
 }
 
 
@@ -133,15 +173,10 @@ function fetchWeather (cityName){
     let resultNowCity = document.querySelector(".tabcontent-now-city, .tabcontent-details-city"); 
     resultNowCity.innerHTML = `${data.name}`;
 
-
-
-
     let resultNowTemp = document.querySelector(".tabcontent-now-temp>span"); 
     let numberTemp = +`${data.main.temp}`;
     resultNowTemp.innerHTML = Math.round(numberTemp-273);
-    
-
-
+  
     let resultNowIco = document.querySelector(".tabcontent-now-ico"); 
     let icoNumber = `${data.weather[0].icon}`;
     let ico = document.createElement('img');
@@ -150,11 +185,7 @@ function fetchWeather (cityName){
     resultNowIco.append(ico);
     let resultNowIcoFirst = document.querySelector(".tabcontent-now-ico>img"); 
     resultNowIcoFirst.remove();
-
-    
-    
-
-
+      
 
     let resultDetailsCity = document.querySelector(".tabcontent-details-city"); 
     resultDetailsCity.innerHTML = `${data.name}`
@@ -211,6 +242,7 @@ function  HandlerFetch (dataName){
     localStorage.setItem("favoriteCities", JSON.stringify(updatedFavoriteCities));
     favoriteCities = updatedFavoriteCities;
     
+    btn_favorite.classList.remove("active"); 
  }
 
 
