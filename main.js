@@ -8,13 +8,15 @@ let btn_deletes = document.querySelectorAll(".row__right-close");
 const UI_FORM_SEARCH = document.querySelectorAll(".search__city");
 let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
-
+// НЕКОРРЕКТНО РАБОТАЕТ
 window.onload = function (){
   let cityName = localStorage.getItem("CurrentCity");
   if (!!cityName){
     fetchWeather (cityName);
+    fetchForecast(cityName);
   } 
   fetchWeather ("Dnipro");
+  fetchForecast("Dnipro");
 }
 
 
@@ -122,6 +124,17 @@ function fetchForecast(cityName){
   
 }
 
+function renderForecast(){
+  
+  let today = document.getElementById("today");
+  today.insertAdjacentHTML('afterend', `
+  <button class="row__right-city">"Amur"</button>
+  <button class="row__right-close" data-close="close"></button>
+  `);
+
+
+}
+
 
 function fetchWeather (cityName){
   const url = `${serverUrl}?q=${cityName}&appid=${apiKey}`;
@@ -133,15 +146,10 @@ function fetchWeather (cityName){
     let resultNowCity = document.querySelector(".tabcontent-now-city, .tabcontent-details-city"); 
     resultNowCity.innerHTML = `${data.name}`;
 
-
-
-
     let resultNowTemp = document.querySelector(".tabcontent-now-temp>span"); 
     let numberTemp = +`${data.main.temp}`;
     resultNowTemp.innerHTML = Math.round(numberTemp-273);
-    
-
-
+  
     let resultNowIco = document.querySelector(".tabcontent-now-ico"); 
     let icoNumber = `${data.weather[0].icon}`;
     let ico = document.createElement('img');
@@ -150,11 +158,7 @@ function fetchWeather (cityName){
     resultNowIco.append(ico);
     let resultNowIcoFirst = document.querySelector(".tabcontent-now-ico>img"); 
     resultNowIcoFirst.remove();
-
-    
-    
-
-
+      
 
     let resultDetailsCity = document.querySelector(".tabcontent-details-city"); 
     resultDetailsCity.innerHTML = `${data.name}`
@@ -211,6 +215,7 @@ function  HandlerFetch (dataName){
     localStorage.setItem("favoriteCities", JSON.stringify(updatedFavoriteCities));
     favoriteCities = updatedFavoriteCities;
     
+    btn_favorite.classList.remove("active"); 
  }
 
 
