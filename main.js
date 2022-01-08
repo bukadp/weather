@@ -1,9 +1,4 @@
-/**function getUrl(url){
-  const serverUrl = 'http://api.openweathermap.org/data/2.5/weather';
-  const cityName = document.querySelector(".city").value;
-  const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
-  const url = `${serverUrl}?q=${cityName}&appid=${apiKey}`;
-}**/
+
 let btn_deletes = document.querySelectorAll(".row__right-close");
 const UI_FORM_SEARCH = document.querySelectorAll(".search__city");
 let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
@@ -97,63 +92,38 @@ function fetchForecast(cityName){
 }
 
 function handlerRender(forecastList){
-  
-
-  
-  forecastList.forEach(function(el){
     
-    let resultForecastDay = document.querySelector(".tabcontent-forecast-info-box-day"); 
-    resultForecastDay.innerHTML = `${el.dt}`;
-  
-    let resultForecastTime = document.querySelector(".tabcontent-forecast-info-box-time"); 
-    resultForecastTime.innerHTML = `${el.dt}`;
-  
-    let resultForecastTemp = document.querySelector(".tabcontent-forecast-info-box-temperature>span"); 
-    let numberTemp = +`${el.main.temp}`;
-    resultForecastTemp.innerHTML = Math.round(numberTemp-273);
-  
-    let resultForecastFeelsLikeTemp = document.querySelector(".tabcontent-forecast-info-box-feels>span"); 
-    let numberFeelsLikeTemp = +`${el.main.feels_like}`;
-    resultForecastFeelsLikeTemp.innerHTML = Math.round(numberFeelsLikeTemp-273);
-  
-    let resultForecastDescription = document.querySelector(".tabcontent-forecast-info-box-ico-name");
-    let resultForecastDescriptionValue = `${el.weather[0].main}`;
-    resultForecastDescription.innerHTML = `${resultForecastDescriptionValue[0].toUpperCase()}${resultForecastDescriptionValue.slice(1)}`;
-  
-    let resultNowIco = document.querySelector(".tabcontent-forecast-info-box-ico-icon"); 
+  forecastList.forEach(function(el){
+
     let icoNumber = `${el.weather[0].icon}`;
     let ico = document.createElement('img');
     ico.src = `${serverIcoUrl}${icoNumber}.png`;
-        
-    resultNowIco.append(ico);
-    let resultNowIcoFirst = document.querySelector(".tabcontent-forecast-info-box-ico-icon>img"); 
-    resultNowIcoFirst.remove();
-
-    renderForecast(el);
+    renderForecast(el, ico.src);
 
   })
 }
 
-
-
-function renderForecast(forecastList){
+function renderForecast(forecastList, icoSrc){
   
-  let today = document.getElementById("today");
+  let today = document.getElementById("forecastWeather");
+  let day = moment(forecastList.dt).format('MMM DD');
+  let time = moment(forecastList.dt).format('h:mm a');
+
 
   today.insertAdjacentHTML('afterend', `
-  <div class="tabcontent-forecast-info-box" id="today">
+  <div class="tabcontent-forecast-info-box" id="forecastWeather">
   <div class="tabcontent-forecast-info-box-day-time">
       <div class="tabcontent-forecast-info-box-day">${forecastList.dt}</div>
-      <div class="tabcontent-forecast-info-box-time">12:00!!!</div>
+      <div class="tabcontent-forecast-info-box-time">${time}</div>
   </div>
   <div class="tabcontent-forecast-info-box-temp-ico">
       <div class="tabcontent-forecast-info-box-temp">
-          <div class="tabcontent-forecast-info-box-temperature">Temperature: <span>13</span>&#176;</div>
-          <div class="tabcontent-forecast-info-box-feels">Feels like: <span>10</span>&#176;</div>
+          <div class="tabcontent-forecast-info-box-temperature">Temperature: <span>${Math.round(+forecastList.main.temp-273)}</span>&#176;</div>
+          <div class="tabcontent-forecast-info-box-feels">Feels like: <span>${Math.round(+forecastList.main.feels_like-273)}</span>&#176;</div>
       </div>
       <div class="tabcontent-forecast-info-box-ico">
-          <div class="tabcontent-forecast-info-box-ico-name">Rain</div>
-          <div class="tabcontent-forecast-info-box-ico-icon box-ico" id="firstBoxIco"><img src="/icons/icon-rain.svg" alt="weather"></div>
+          <div class="tabcontent-forecast-info-box-ico-name">${forecastList.weather[0].main[0].toUpperCase()}${forecastList.weather[0].main.slice(1)}</div>
+          <div class="tabcontent-forecast-info-box-ico-icon box-ico" id="firstBoxIco"><img src="${icoSrc}" alt="weather"></div>
       </div>
   </div>
 </div>
@@ -168,6 +138,7 @@ function fetchWeather (cityName){
  
   fetch(url)
   .then((response) => response.json())
+  
   .then (data => {
     
     let resultNowCity = document.querySelector(".tabcontent-now-city, .tabcontent-details-city"); 
@@ -209,11 +180,10 @@ function fetchWeather (cityName){
     
     HandlerFetch(data.name);
 
-    //let city = document.querySelector(".city").value;
-    //getFavoriteButtonColor (city);
   
 //вот тут КОНЕЦ
     })
+    
     .catch(error => alert(error.message));
      
   }
@@ -248,12 +218,6 @@ function  HandlerFetch (dataName){
 
   btn_favorite.addEventListener("click", isNew)
   
-
-  /**function ChangeBtn (){
-    
-    btn_favorite.classList.toggle("active");
-  }**/
-
 
   //localStorage
 
@@ -297,16 +261,9 @@ function DeleteCity(){
 
 
 function HandleFavoriteClick(){
-
-  
-  AddCity(); 
-  //Store();  
-  AddFavoriteCities();
- // ChangeBtn ();
+   AddCity(); 
+   AddFavoriteCities();
 }
-
-
-////////////////////////////////////////////////////////////////////////////////////////ТУТ ПРОДОЛЖАТЬ!!!
 
 
   let favoriteCities = [];
@@ -324,37 +281,6 @@ function HandleFavoriteClick(){
   
 
 
-  
-
-  /**
-    let cities = [];
-    function AddCityInArr (name) {
-      this.cities.push({
-        name,
-      })
-    };**/
-
-    /**function DeleteCityFromArr (name) {
-      this.cities.forEach((city, index) => {
-        if (name === city.name) {
-          this.cities.splice(index, 1)
-        }
-      })
-    };
-
-  
-  let nameCity = document.querySelector(".tabcontent-now-city").textContent;
-
-  localStorage.setItem("FavoriteCities", nameCity);**/
-  
-
- 
-  //localStorage.clear()
-  /**let keys = Object.keys(localStorage);//выводит всё что есть в localStorage
-  for(let key of keys) {
-    alert(`${key}: ${localStorage.getItem(key)}`);
-  }**/
-  
 
 //проверка в localStorage наличие города
 function CheckCityInLocalStorage(resultNowCity){
@@ -430,12 +356,3 @@ function openWeather(evt, tabsSwitch) {
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
 
-
-  
-
-/** в задании
-
-storage.saveFavoriteCities(favoriteCities)
-const favoriteCities = storage.getFavoriteCities();
-const currentCity = storage.getCurrentCity(); 
-!!!!!!!!!!!!!!!!!! **/
