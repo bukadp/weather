@@ -3,7 +3,7 @@ let btn_deletes = document.querySelectorAll(".row__right-close");
 let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 const btn_favorite = document.querySelector(".tabcontent-now-fvorite-btn"); 
 const cityFavorites = document.querySelectorAll(".row__right-city");
-let cityFavoriteAdd = document.querySelector(".row__right-locations");
+let cityFavoriteAdd = document.querySelector(".row__right-locations>ul");
 const serverUrl = 'http://api.openweathermap.org/data/2.5/weather';
 const serverUrlForecast = 'http://api.openweathermap.org/data/2.5/forecast';
 const serverIcoUrl = 'https://openweathermap.org/img/wn/';
@@ -14,6 +14,7 @@ let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localSt
 //Некорректно работает 
 window.onload = function(){
   let cityName = localStorage.getItem("CurrentCity");
+  initialFavoriteCities();
   if (!!cityName){
     fetchWeather(cityName);
     fetchForecast(cityName);
@@ -26,8 +27,14 @@ window.onload = function(){
 }
 
 function initialFavoriteCities(){
-  let currentCities = JSON.parse(localStorage.getItem("favoriteCities"));
-  
+  let currentFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
+  if (!Array.isArray(currentFavoriteCities)){
+    return;
+  }
+  currentFavoriteCities.forEach(function(el){
+    renderFavoriteCities(el);
+  })
+
 }
 
 
@@ -298,22 +305,26 @@ function checkToExistCityInTheList(cityName){
 }
 
 function AddCity(){
-  let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
-  if (!checkToExistCity(resultNowCity)){
+  let nowCity = document.querySelector(".tabcontent-now-city").textContent;
+  if (!checkToExistCity(nowCity)){
      btn_favorite.classList.add("active");
      
   }
-  if (!checkToExistCityInTheList(resultNowCity)){
-    let cityFavorite = document.createElement('li'); 
-    cityFavorite.classList.add("row__right-citys");
-    cityFavoriteAdd.prepend(cityFavorite);
-    cityFavorite.innerHTML = `
-          <button class="row__right-city">${resultNowCity}</button>
-          <button class="row__right-close" data-close="close"></button>
-          `;
-    document.querySelector(".row__right-close").addEventListener("click", DeleteCityFromAddedLocations);
-    document.querySelector(".row__right-city").addEventListener("click", getCityNameFromFavorite);
+  if (!checkToExistCityInTheList(nowCity)){
+    renderFavoriteCities(nowCity);
   }
+}
+
+function renderFavoriteCities(nowCity){
+  let cityFavorite = document.createElement('li'); 
+  cityFavorite.classList.add("row__right-citys");
+  cityFavoriteAdd.prepend(cityFavorite);
+  cityFavorite.innerHTML = `
+        <button class="row__right-city">${nowCity}</button>
+        <button class="row__right-close" data-close="close"></button>
+        `;
+  document.querySelector(".row__right-close").addEventListener("click", DeleteCityFromAddedLocations);
+  document.querySelector(".row__right-city").addEventListener("click", getCityNameFromFavorite);
 }
 
 //Tabs 
