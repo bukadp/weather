@@ -1,17 +1,33 @@
 
 let btn_deletes = document.querySelectorAll(".row__right-close");
-const UI_FORM_SEARCH = document.querySelectorAll(".search__city");
 let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
+const btn_favorite = document.querySelector(".tabcontent-now-fvorite-btn"); 
+const cityFavorites = document.querySelectorAll(".row__right-city");
+let cityFavoriteAdd = document.querySelector(".row__right-locations");
+const serverUrl = 'http://api.openweathermap.org/data/2.5/weather';
+const serverUrlForecast = 'http://api.openweathermap.org/data/2.5/forecast';
+const serverIcoUrl = 'https://openweathermap.org/img/wn/';
+const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
+let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localStorage.getItem("favoriteCities")) : [];
 
-// НЕКОРРЕКТНО РАБОТАЕТ
-window.onload = function (){
+
+//Некорректно работает 
+window.onload = function(){
   let cityName = localStorage.getItem("CurrentCity");
   if (!!cityName){
-    fetchWeather (cityName);
+    fetchWeather(cityName);
     fetchForecast(cityName);
+    //statrtCity(cityName);
   } 
-  fetchWeather ("Dnipro");
+  else {
+  fetchWeather("Dnipro");
   fetchForecast("Dnipro");
+  }
+}
+
+function initialFavoriteCities(){
+  let currentCities = JSON.parse(localStorage.getItem("favoriteCities"));
+  
 }
 
 
@@ -20,32 +36,32 @@ for (let btn_delete of btn_deletes) {
 }
 
 
-let btn_favorite = document.querySelector(".tabcontent-now-fvorite-btn"); 
-const cityFavorites = document.querySelectorAll(".row__right-city");
-let cityFavoriteAdd = document.querySelector(".row__right-locations");
-
-
-
-
 for (let cityFavorite of cityFavorites) {
   cityFavorite.addEventListener("click", getCityNameFromFavorite)
 }
 
+function clearCurrentForecast(){
+  let forecastsForDelete = document.querySelectorAll(".tabcontent-forecast-info-box");
+  for (let i=0; i<forecastsForDelete.length; i++){
+    forecastsForDelete[i].remove();
+  }
+  
+}
 
 function getCityName (){
   let cityName = document.querySelector(".city").value;
       fetchWeather (cityName);
+      clearCurrentForecast();
       fetchForecast(cityName);
 }
-
 
 function getCityNameFromFavorite(){
   cityName = this.textContent;
   fetchWeather(cityName);
+  clearCurrentForecast();
   fetchForecast(cityName);
   getFavoriteButtonColor(cityName);
 }
-
 
 // chek btn
 function getFavoriteButtonColor(cityName){
@@ -59,7 +75,6 @@ function getFavoriteButtonColor(cityName){
 
 }
 
-
 // true or false
 function checkOnFavorites(city){
   let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
@@ -68,14 +83,6 @@ function checkOnFavorites(city){
 
     return isExist;
 }
-
-
-
-const serverUrl = 'http://api.openweathermap.org/data/2.5/weather';
-const serverUrlForecast = 'http://api.openweathermap.org/data/2.5/forecast';
-const serverIcoUrl = 'https://openweathermap.org/img/wn/';
-const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
-
 
 function fetchForecast(cityName){
   const urlForecast = `${serverUrlForecast}?q=${cityName}&appid=${apiKey}`;
@@ -109,7 +116,6 @@ function renderForecast(forecastList, icoSrc){
   let day = moment(forecastList.dt).format('MMM DD');
   let time = moment(forecastList.dt).format('h:mm a');
 
-
   today.insertAdjacentHTML('afterend', `
   <div class="tabcontent-forecast-info-box" id="forecastWeather">
   <div class="tabcontent-forecast-info-box-day-time">
@@ -129,16 +135,13 @@ function renderForecast(forecastList, icoSrc){
 </div>
   `);
 
-
 }
-
 
 function fetchWeather (cityName){
   const url = `${serverUrl}?q=${cityName}&appid=${apiKey}`;
  
   fetch(url)
   .then((response) => response.json())
-  
   .then (data => {
     
     let resultNowCity = document.querySelector(".tabcontent-now-city, .tabcontent-details-city"); 
@@ -156,7 +159,6 @@ function fetchWeather (cityName){
     resultNowIco.append(ico);
     let resultNowIcoFirst = document.querySelector(".tabcontent-now-ico>img"); 
     resultNowIcoFirst.remove();
-      
 
     let resultDetailsCity = document.querySelector(".tabcontent-details-city"); 
     resultDetailsCity.innerHTML = `${data.name}`
@@ -166,7 +168,6 @@ function fetchWeather (cityName){
 
     let resultSunrise = document.querySelector(".tabcontent-details-sunrise>span"); 
     resultSunrise.innerHTML = `${data.sys.sunrise}`
-    
 
     let resultSunset = document.querySelector(".tabcontent-details-sunset>span"); 
     resultSunset.innerHTML = `${data.sys.sunset}`
@@ -180,25 +181,22 @@ function fetchWeather (cityName){
     
     HandlerFetch(data.name);
 
-  
-//вот тут КОНЕЦ
     })
     
-    .catch(error => alert(error.message));
-     
+    .catch(error => alert(error.message));     
   }
+
 
 function  HandlerFetch (dataName){
   getFavoriteButtonColor(dataName);
   AddCurrentCityInLocalStorage(dataName);
-
 }
+
 
   function AddCurrentCityInLocalStorage(nameCity){
     localStorage.setItem("CurrentCity", nameCity);
   }
 
-  
 
   function DeleteCityFromAddedLocations(){
     this.parentElement.remove();
@@ -215,12 +213,10 @@ function  HandlerFetch (dataName){
     btn_favorite.classList.remove("active"); 
  }
 
-
   btn_favorite.addEventListener("click", isNew)
   
 
   //localStorage
-
   function isNew(){
     btn_favorite.classList.toggle('active')
     
@@ -232,8 +228,8 @@ function  HandlerFetch (dataName){
     }
   }
 
-function DeleteCity(){
   
+function DeleteCity(){
   let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
   let arrFavoriteCities = document.getElementsByClassName("row__right-city");
@@ -248,7 +244,6 @@ function DeleteCity(){
 
   deleteFavoriteCities.parentElement.remove();
   
-  
   let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
   
   let updatedFavoriteCities =  parsedFavoriteCities.filter(function (el){
@@ -259,14 +254,12 @@ function DeleteCity(){
   
 }
 
-
 function HandleFavoriteClick(){
    AddCity(); 
    AddFavoriteCities();
 }
 
-
-  let favoriteCities = [];
+  
   function AddFavoriteCities(){
     let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
     let result = CheckCityInLocalStorage(resultNowCity);
@@ -275,12 +268,8 @@ function HandleFavoriteClick(){
      favoriteCities.push(resultNowCity);
 
     localStorage.setItem("favoriteCities", JSON.stringify(favoriteCities));
-    
     }
   }
-  
-
-
 
 //проверка в localStorage наличие города
 function CheckCityInLocalStorage(resultNowCity){
@@ -293,11 +282,9 @@ function CheckCityInLocalStorage(resultNowCity){
   return result;
 }
 
-
 function checkToExistCity(city){
   return localStorage.getItem(city);
 }
-
 
 function checkToExistCityInTheList(cityName){
   let result = null;
@@ -309,7 +296,6 @@ function checkToExistCityInTheList(cityName){
     })
     return result
 }
-
 
 function AddCity(){
   let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
@@ -334,25 +320,20 @@ function AddCity(){
 function openWeather(evt, tabsSwitch) {
     // Declare all variables
     let i, tabcontent, tablinks;
-  
     // Get all elements with class="row__left-tabcontent" and hide them
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
       tabcontent[i].style.display = "none";
     }
-  
     // Get all elements with class="tablinks" and remove the class "active"
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-  
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabsSwitch).style.display = "flex";
     evt.currentTarget.className += " active";
   }
-
-
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
 
