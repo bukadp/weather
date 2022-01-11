@@ -10,15 +10,13 @@ const serverIcoUrl = 'https://openweathermap.org/img/wn/';
 const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
 let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localStorage.getItem("favoriteCities")) : [];
 
-
-//Некорректно работает 
+//onload main page
 window.onload = function(){
   let cityName = localStorage.getItem("CurrentCity");
   initialFavoriteCities();
   if (!!cityName){
     fetchWeather(cityName);
     fetchForecast(cityName);
-    //statrtCity(cityName);
   } 
   else {
   fetchWeather("Dnipro");
@@ -26,6 +24,7 @@ window.onload = function(){
   }
 }
 
+//initial list of favorite cities
 function initialFavoriteCities(){
   let currentFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
   if (!Array.isArray(currentFavoriteCities)){
@@ -37,16 +36,17 @@ function initialFavoriteCities(){
 
 }
 
-
+//addEventListener on cross
 for (let btn_delete of btn_deletes) {
   btn_delete.addEventListener("click", DeleteCityFromAddedLocations)
 }
 
-
+//addEventListener on favorite cities list
 for (let cityFavorite of cityFavorites) {
   cityFavorite.addEventListener("click", getCityNameFromFavorite)
 }
 
+//clear box in forecast
 function clearCurrentForecast(){
   let forecastsForDelete = document.querySelectorAll(".tabcontent-forecast-info-box");
   for (let i=0; i<forecastsForDelete.length; i++){
@@ -55,6 +55,7 @@ function clearCurrentForecast(){
   
 }
 
+//get City from UI form & fetch weather
 function getCityName (){
   let cityName = document.querySelector(".city").value;
       fetchWeather (cityName);
@@ -62,6 +63,7 @@ function getCityName (){
       fetchForecast(cityName);
 }
 
+//get City from favorite cities & fetch weather
 function getCityNameFromFavorite(){
   cityName = this.textContent;
   fetchWeather(cityName);
@@ -70,7 +72,7 @@ function getCityNameFromFavorite(){
   getFavoriteButtonColor(cityName);
 }
 
-// chek btn
+//favorite btn color 
 function getFavoriteButtonColor(cityName){
   if (!checkOnFavorites(cityName)){
     btn_favorite.classList.remove("active");  
@@ -82,7 +84,7 @@ function getFavoriteButtonColor(cityName){
 
 }
 
-// true or false
+// check localStorage for includes city
 function checkOnFavorites(city){
   let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
     
@@ -91,6 +93,7 @@ function checkOnFavorites(city){
     return isExist;
 }
 
+//fetch Forecast
 function fetchForecast(cityName){
   const urlForecast = `${serverUrlForecast}?q=${cityName}&appid=${apiKey}`;
   fetch(urlForecast)
@@ -104,7 +107,7 @@ function fetchForecast(cityName){
   })
   
 }
-
+// get ico weather
 function handlerRender(forecastList){
     
   forecastList.forEach(function(el){
@@ -116,7 +119,7 @@ function handlerRender(forecastList){
 
   })
 }
-
+//render forecast
 function renderForecast(forecastList, icoSrc){
   
   let today = document.getElementById("forecastWeather");
@@ -143,7 +146,7 @@ function renderForecast(forecastList, icoSrc){
   `);
 
 }
-
+//fetch Weather
 function fetchWeather (cityName){
   const url = `${serverUrl}?q=${cityName}&appid=${apiKey}`;
  
@@ -193,18 +196,18 @@ function fetchWeather (cityName){
     .catch(error => alert(error.message));     
   }
 
-
+//after fetch weather Handler
 function  HandlerFetch (dataName){
   getFavoriteButtonColor(dataName);
   AddCurrentCityInLocalStorage(dataName);
 }
 
-
+//Add Current City In LocalStorage
   function AddCurrentCityInLocalStorage(nameCity){
     localStorage.setItem("CurrentCity", nameCity);
   }
 
-
+//!!!del city from list favorite & localStorage+ &btn class
   function DeleteCityFromAddedLocations(){
     this.parentElement.remove();
     let delCity = this.parentElement.querySelector(".row__right-city").innerText;
@@ -223,7 +226,7 @@ function  HandlerFetch (dataName){
   btn_favorite.addEventListener("click", isNew)
   
 
-  //localStorage
+  //toggle favorite btn
   function isNew(){
     btn_favorite.classList.toggle('active')
     
@@ -235,7 +238,7 @@ function  HandlerFetch (dataName){
     }
   }
 
-  
+  //del now city from favorites cities list & localStorage+ 
 function DeleteCity(){
   let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
@@ -266,7 +269,7 @@ function HandleFavoriteClick(){
    AddFavoriteCities();
 }
 
-  
+  //Add Favorite Cities in localStorage+
   function AddFavoriteCities(){
     let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
     let result = CheckCityInLocalStorage(resultNowCity);
@@ -288,11 +291,12 @@ function CheckCityInLocalStorage(resultNowCity){
   }
   return result;
 }
-
+// check city in localStorage+  
 function checkToExistCity(city){
   return localStorage.getItem(city);
 }
 
+//check city in favorite cities list
 function checkToExistCityInTheList(cityName){
   let result = null;
   let cities = document.querySelectorAll(".row__right-citys");
@@ -303,7 +307,7 @@ function checkToExistCityInTheList(cityName){
     })
     return result
 }
-
+//add city to favorite cities list & btn active
 function AddCity(){
   let nowCity = document.querySelector(".tabcontent-now-city").textContent;
   if (!checkToExistCity(nowCity)){
@@ -314,7 +318,7 @@ function AddCity(){
     renderFavoriteCities(nowCity);
   }
 }
-
+//render favorite cities list
 function renderFavoriteCities(nowCity){
   let cityFavorite = document.createElement('li'); 
   cityFavorite.classList.add("row__right-citys");
