@@ -9,7 +9,8 @@ const serverUrlForecast = 'http://api.openweathermap.org/data/2.5/forecast';
 const serverIcoUrl = 'https://openweathermap.org/img/wn/';
 const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
 //let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localStorage.getItem("favoriteCities")) : [];
-let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localStorage.getItem("favoriteCities")) : new Set();
+let favoriteCities = localStorage.getItem("favoriteCities") ? new Set (JSON.parse(localStorage.getItem("favoriteCities"))) 
+                                                                  : new Set();
 
 //onload main page
 window.onload = function(){
@@ -38,7 +39,7 @@ window.onload = function(){
 }**/
 
 function initialFavoriteCities(){
-  let currentFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
+  let currentFavoriteCities = new Set(JSON.parse(localStorage.getItem("favoriteCities")));
   if (!currentFavoriteCities==true){
     return;
   }
@@ -106,8 +107,8 @@ function getFavoriteButtonColor(cityName){
     return isExist;
 }**/
 function checkOnFavorites(city){
-  let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
-  let isExist =  parsedFavoriteCities.has(city)
+  let parsedFavoriteCities = new Set(JSON.parse(localStorage.getItem("favoriteCities")));
+  let isExist = parsedFavoriteCities.has(city);
     return isExist;
 }
 
@@ -231,12 +232,12 @@ function  HandlerFetch (dataName){
     this.parentElement.remove();
     let delCity = this.parentElement.querySelector(".row__right-city").innerText;
     
-    let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
+    let parsedFavoriteCities = new Set (JSON.parse(localStorage.getItem("favoriteCities")));
     
     let updatedFavoriteCities =  parsedFavoriteCities.filter(function (el){
       return el !== delCity;
     })
-    localStorage.setItem("favoriteCities", JSON.stringify(updatedFavoriteCities));
+    localStorage.setItem("favoriteCities", JSON.stringify([...updatedFavoriteCities]));
     favoriteCities = updatedFavoriteCities;
     
     btn_favorite.classList.remove("active"); 
@@ -244,9 +245,23 @@ function  HandlerFetch (dataName){
  function DeleteCityFromAddedLocations(){
   this.parentElement.remove();
   let delCity = this.parentElement.querySelector(".row__right-city").innerText;
-    
-  btn_favorite.classList.remove("active"); 
+  
+  let parsedFavoriteCities = new Set (JSON.parse(localStorage.getItem("favoriteCities")));
+  parsedFavoriteCities.delete(delCity)
+  localStorage.setItem("favoriteCities", JSON.stringify([...parsedFavoriteCities]));
+  let resultNowCity = document.querySelector(".tabcontent-now-city").textContent; // ПОЧЕМУ НЕ РАБОТАЕТ ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ?!?!
+   
+  if (delCity===resultNowCity){
+    btn_favorite.classList.remove("active"); 
+  }
+  else{
+    return;
+  } 
+
 }
+
+
+
 
   btn_favorite.addEventListener("click", isNew)
   
@@ -303,6 +318,9 @@ function DeleteCity(){
 
   deleteFavoriteCities.parentElement.remove();
      
+  let parsedFavoriteCities = new Set (JSON.parse(localStorage.getItem("favoriteCities")));
+  parsedFavoriteCities.delete(resultNowCity)
+  localStorage.setItem("favoriteCities", JSON.stringify([...parsedFavoriteCities]));
 }
 function HandleFavoriteClick(){
    AddCity(); 
@@ -313,7 +331,7 @@ function HandleFavoriteClick(){
   function AddFavoriteCities(){
     let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
     
-     favoriteCities.add(resultNowCity);
+    favoriteCities.add(resultNowCity);
 
     localStorage.setItem("favoriteCities", JSON.stringify([...favoriteCities]));
     }
