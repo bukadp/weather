@@ -8,7 +8,8 @@ const serverUrl = 'http://api.openweathermap.org/data/2.5/weather';
 const serverUrlForecast = 'http://api.openweathermap.org/data/2.5/forecast';
 const serverIcoUrl = 'https://openweathermap.org/img/wn/';
 const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
-let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localStorage.getItem("favoriteCities")) : [];
+//let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localStorage.getItem("favoriteCities")) : [];
+let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localStorage.getItem("favoriteCities")) : new Set();
 
 //onload main page
 window.onload = function(){
@@ -25,7 +26,7 @@ window.onload = function(){
 }
 
 //initial list of favorite cities
-function initialFavoriteCities(){
+/**function initialFavoriteCities(){
   let currentFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
   if (!Array.isArray(currentFavoriteCities)){
     return;
@@ -34,7 +35,19 @@ function initialFavoriteCities(){
     renderFavoriteCities(el);
   })
 
+}**/
+
+function initialFavoriteCities(){
+  let currentFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
+  if (!currentFavoriteCities==true){
+    return;
+  }
+  currentFavoriteCities.forEach(function(el){
+    renderFavoriteCities(el);
+  })
+
 }
+
 
 //addEventListener on cross
 for (let btn_delete of btn_deletes) {
@@ -85,13 +98,19 @@ function getFavoriteButtonColor(cityName){
 }
 
 // check localStorage for includes city
-function checkOnFavorites(city){
+/**function checkOnFavorites(city){
   let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
     
     let isExist =  parsedFavoriteCities.includes(city);
 
     return isExist;
+}**/
+function checkOnFavorites(city){
+  let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
+  let isExist =  parsedFavoriteCities.has(city)
+    return isExist;
 }
+
 
 //fetch Forecast
 function fetchForecast(cityName){
@@ -208,7 +227,7 @@ function  HandlerFetch (dataName){
   }
 
 //!!!del city from list favorite & localStorage+ &btn class
-  function DeleteCityFromAddedLocations(){
+  /**function DeleteCityFromAddedLocations(){
     this.parentElement.remove();
     let delCity = this.parentElement.querySelector(".row__right-city").innerText;
     
@@ -221,7 +240,13 @@ function  HandlerFetch (dataName){
     favoriteCities = updatedFavoriteCities;
     
     btn_favorite.classList.remove("active"); 
- }
+ }**/
+ function DeleteCityFromAddedLocations(){
+  this.parentElement.remove();
+  let delCity = this.parentElement.querySelector(".row__right-city").innerText;
+    
+  btn_favorite.classList.remove("active"); 
+}
 
   btn_favorite.addEventListener("click", isNew)
   
@@ -239,7 +264,7 @@ function  HandlerFetch (dataName){
   }
 
   //del now city from favorites cities list & localStorage+ 
-function DeleteCity(){
+/**function DeleteCity(){
   let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
   let arrFavoriteCities = document.getElementsByClassName("row__right-city");
@@ -262,8 +287,23 @@ function DeleteCity(){
   localStorage.setItem("favoriteCities", JSON.stringify(updatedFavoriteCities));
   favoriteCities = updatedFavoriteCities;
   
-}
+}**/
+function DeleteCity(){
+  let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
+  let arrFavoriteCities = document.getElementsByClassName("row__right-city");
+  
+  let deleteFavoriteCities; 
+  for (let i=0; i<arrFavoriteCities.length; i++){
+    if (resultNowCity==arrFavoriteCities[i].textContent){
+      deleteFavoriteCities = arrFavoriteCities[i];
+    }
+    
+  }
+
+  deleteFavoriteCities.parentElement.remove();
+     
+}
 function HandleFavoriteClick(){
    AddCity(); 
    AddFavoriteCities();
@@ -272,17 +312,14 @@ function HandleFavoriteClick(){
   //Add Favorite Cities in localStorage+
   function AddFavoriteCities(){
     let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
-    let result = CheckCityInLocalStorage(resultNowCity);
-    if (result == false){   
     
-     favoriteCities.push(resultNowCity);
+     favoriteCities.add(resultNowCity);
 
-    localStorage.setItem("favoriteCities", JSON.stringify(favoriteCities));
+    localStorage.setItem("favoriteCities", JSON.stringify([...favoriteCities]));
     }
-  }
 
 //проверка в localStorage наличие города
-function CheckCityInLocalStorage(resultNowCity){
+/**function CheckCityInLocalStorage(resultNowCity){
   let result = false;
   let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
   
@@ -290,7 +327,8 @@ function CheckCityInLocalStorage(resultNowCity){
     result = parsedFavoriteCities.includes(resultNowCity);
   }
   return result;
-}
+}**/
+
 // check city in localStorage+  
 function checkToExistCity(city){
   return localStorage.getItem(city);
