@@ -142,15 +142,14 @@ function handlerRender(forecastList){
 //render forecast
 function renderForecast(forecastList, icoSrc){
   
-  let today = document.getElementById("forecastWeather");
-  let day = moment(forecastList.dt).format('MMM DD');
-  let time = moment(forecastList.dt).format('h:mm a');
+ // let today = document.getElementById("forecastWeather");
+ let today = document.querySelector(".tabcontent-forecast-info");
 
-  today.insertAdjacentHTML('afterend', `
+  today.insertAdjacentHTML('beforeBegin', `
   <div class="tabcontent-forecast-info-box" id="forecastWeather">
   <div class="tabcontent-forecast-info-box-day-time">
-      <div class="tabcontent-forecast-info-box-day">${forecastList.dt}</div>
-      <div class="tabcontent-forecast-info-box-time">${time}</div>
+      <div class="tabcontent-forecast-info-box-day">${dateTransform(forecastList.dt)}</div>
+      <div class="tabcontent-forecast-info-box-time">${timeTransform(forecastList.dt)+"0"}</div>
   </div>
   <div class="tabcontent-forecast-info-box-temp-ico">
       <div class="tabcontent-forecast-info-box-temp">
@@ -194,16 +193,16 @@ function fetchWeather (cityName){
     resultDetailsCity.innerHTML = `${data.name}`
 
     let resultTemp = document.querySelector(".tabcontent-details-temp>span"); 
-    resultTemp.innerHTML = `${data.main.temp}`
+    resultTemp.innerHTML = `${Math.round(data.main.temp-273)}`
 
     let resultSunrise = document.querySelector(".tabcontent-details-sunrise>span"); 
-    resultSunrise.innerHTML = `${data.sys.sunrise}`
+    resultSunrise.innerHTML = "0"+timeTransform(data.sys.sunrise);
 
     let resultSunset = document.querySelector(".tabcontent-details-sunset>span"); 
-    resultSunset.innerHTML = `${data.sys.sunset}`
+    resultSunset.innerHTML = timeTransform(data.sys.sunset);
 
     let resultFeelsLike = document.querySelector(".tabcontent-details-feels>span"); 
-    resultFeelsLike.innerHTML = `${data.main.feels_like}`
+    resultFeelsLike.innerHTML = `${Math.round(data.main.feels_like-273)}`
 
     let resultWeatherDescription = document.querySelector(".tabcontent-details-weather>span");
     let resultWeatherDescriptionValue = `${data.weather[0].description}`;
@@ -215,6 +214,25 @@ function fetchWeather (cityName){
     
     .catch(error => alert(error.message));     
   }
+
+  function timeTransform(timeUnix){
+    let time = timeUnix*1000;
+
+const hours = new Date(time).getHours();
+const minutes = new Date(time).getMinutes();
+
+return (`${hours}:${minutes}`);
+  }
+
+  function dateTransform(unixTime){
+  const date = new Date(unixTime * 1000);
+  const month = date.toLocaleString('en-US', {month: "short"});
+  const day = new Date(date).getDate();
+
+return (`${day} ${month}`);
+  }
+
+
 
 //after fetch weather Handler
 function  HandlerFetch (dataName){
@@ -249,6 +267,7 @@ function  HandlerFetch (dataName){
   let parsedFavoriteCities = new Set (JSON.parse(localStorage.getItem("favoriteCities")));
   parsedFavoriteCities.delete(delCity)
   localStorage.setItem("favoriteCities", JSON.stringify([...parsedFavoriteCities]));
+  favoriteCities = parsedFavoriteCities;
   let resultNowCity = document.querySelector(".tabcontent-now-city").textContent; // ПОЧЕМУ НЕ РАБОТАЕТ ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ?!?!
    
   if (delCity===resultNowCity){
@@ -321,6 +340,7 @@ function DeleteCity(){
   let parsedFavoriteCities = new Set (JSON.parse(localStorage.getItem("favoriteCities")));
   parsedFavoriteCities.delete(resultNowCity)
   localStorage.setItem("favoriteCities", JSON.stringify([...parsedFavoriteCities]));
+  favoriteCities = parsedFavoriteCities;
 }
 function HandleFavoriteClick(){
    AddCity(); 
