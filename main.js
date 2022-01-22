@@ -26,17 +26,6 @@ window.onload = function(){
   }
 }
 
-//initial list of favorite cities
-/**function initialFavoriteCities(){
-  let currentFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
-  if (!Array.isArray(currentFavoriteCities)){
-    return;
-  }
-  currentFavoriteCities.forEach(function(el){
-    renderFavoriteCities(el);
-  })
-
-}**/
 
 function initialFavoriteCities(){
   let currentFavoriteCities = new Set(JSON.parse(localStorage.getItem("favoriteCities")));
@@ -98,19 +87,13 @@ function getFavoriteButtonColor(cityName){
 
 }
 
-// check localStorage for includes city
-/**function checkOnFavorites(city){
-  let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
-    
-    let isExist =  parsedFavoriteCities.includes(city);
 
-    return isExist;
-}**/
 function checkOnFavorites(city){
   let parsedFavoriteCities = new Set(JSON.parse(localStorage.getItem("favoriteCities")));
   let isExist = parsedFavoriteCities.has(city);
     return isExist;
 }
+
 
 
 //fetch Forecast
@@ -142,7 +125,6 @@ function handlerRender(forecastList){
 //render forecast
 function renderForecast(forecastList, icoSrc){
   
- // let today = document.getElementById("forecastWeather");
  let today = document.querySelector(".tabcontent-forecast-info");
 
   today.insertAdjacentHTML('beforeBegin', `
@@ -245,21 +227,6 @@ function  HandlerFetch (dataName){
     localStorage.setItem("CurrentCity", nameCity);
   }
 
-//!!!del city from list favorite & localStorage+ &btn class
-  /**function DeleteCityFromAddedLocations(){
-    this.parentElement.remove();
-    let delCity = this.parentElement.querySelector(".row__right-city").innerText;
-    
-    let parsedFavoriteCities = new Set (JSON.parse(localStorage.getItem("favoriteCities")));
-    
-    let updatedFavoriteCities =  parsedFavoriteCities.filter(function (el){
-      return el !== delCity;
-    })
-    localStorage.setItem("favoriteCities", JSON.stringify([...updatedFavoriteCities]));
-    favoriteCities = updatedFavoriteCities;
-    
-    btn_favorite.classList.remove("active"); 
- }**/
  function DeleteCityFromAddedLocations(){
   this.parentElement.remove();
   let delCity = this.parentElement.querySelector(".row__right-city").innerText;
@@ -279,9 +246,6 @@ function  HandlerFetch (dataName){
 
 }
 
-
-
-
   btn_favorite.addEventListener("click", isNew)
   
 
@@ -297,31 +261,7 @@ function  HandlerFetch (dataName){
     }
   }
 
-  //del now city from favorites cities list & localStorage+ 
-/**function DeleteCity(){
-  let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
-  let arrFavoriteCities = document.getElementsByClassName("row__right-city");
-  
-  let deleteFavoriteCities; 
-  for (let i=0; i<arrFavoriteCities.length; i++){
-    if (resultNowCity==arrFavoriteCities[i].textContent){
-      deleteFavoriteCities = arrFavoriteCities[i];
-    }
-    
-  }
-
-  deleteFavoriteCities.parentElement.remove();
-  
-  let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
-  
-  let updatedFavoriteCities =  parsedFavoriteCities.filter(function (el){
-    return el !== resultNowCity;
-  })
-  localStorage.setItem("favoriteCities", JSON.stringify(updatedFavoriteCities));
-  favoriteCities = updatedFavoriteCities;
-  
-}**/
 function DeleteCity(){
   let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
@@ -356,16 +296,6 @@ function HandleFavoriteClick(){
     localStorage.setItem("favoriteCities", JSON.stringify([...favoriteCities]));
     }
 
-//проверка в localStorage наличие города
-/**function CheckCityInLocalStorage(resultNowCity){
-  let result = false;
-  let parsedFavoriteCities = JSON.parse(localStorage.getItem("favoriteCities"));
-  
-  if (!!parsedFavoriteCities){
-    result = parsedFavoriteCities.includes(resultNowCity);
-  }
-  return result;
-}**/
 
 // check city in localStorage+  
 function checkToExistCity(city){
