@@ -1,3 +1,4 @@
+import {timeTransform, dateTransform} from "./converters.js";
 
 let btn_deletes = document.querySelectorAll(".row__right-close");
 let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
@@ -110,6 +111,7 @@ function fetchForecast(cityName){
   })
   
 }
+
 // get ico weather
 function handlerRender(forecastList){
     
@@ -122,6 +124,7 @@ function handlerRender(forecastList){
 
   })
 }
+
 //render forecast
 function renderForecast(forecastList, icoSrc){
   
@@ -147,6 +150,7 @@ function renderForecast(forecastList, icoSrc){
   `);
 
 }
+
 //fetch Weather
 function fetchWeather (cityName){
   const url = `${serverUrl}?q=${cityName}&appid=${apiKey}`;
@@ -196,24 +200,6 @@ function fetchWeather (cityName){
     
     .catch(error => alert(error.message));     
   }
-
-  function timeTransform(timeUnix){
-    let time = timeUnix*1000;
-
-const hours = new Date(time).getHours();
-const minutes = new Date(time).getMinutes();
-
-return (`${hours}:${minutes}`);
-  }
-
-  function dateTransform(unixTime){
-  const date = new Date(unixTime * 1000);
-  const month = date.toLocaleString('en-US', {month: "short"});
-  const day = new Date(date).getDate();
-
-return (`${day} ${month}`);
-  }
-
 
 
 //after fetch weather Handler
@@ -336,7 +322,7 @@ function renderFavoriteCities(nowCity){
   document.querySelector(".row__right-close").addEventListener("click", DeleteCityFromAddedLocations);
   document.querySelector(".row__right-city").addEventListener("click", getCityNameFromFavorite);
 }
-
+/**
 //Tabs 
 function openWeather(evt, tabsSwitch) {
     // Declare all variables
@@ -358,3 +344,4 @@ function openWeather(evt, tabsSwitch) {
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
 
+**/
