@@ -1,4 +1,5 @@
 import {timeTransform, dateTransform} from "./converters.js";
+//let module = await import('./converters.js');
 
 let btn_deletes = document.querySelectorAll(".row__right-close");
 let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
@@ -9,7 +10,6 @@ const serverUrl = 'http://api.openweathermap.org/data/2.5/weather';
 const serverUrlForecast = 'http://api.openweathermap.org/data/2.5/forecast';
 const serverIcoUrl = 'https://openweathermap.org/img/wn/';
 const apiKey = 'f660a2fb1e4bad108d6160b7f58c555f';
-//let favoriteCities = localStorage.getItem("favoriteCities") ? JSON.parse(localStorage.getItem("favoriteCities")) : [];
 let favoriteCities = localStorage.getItem("favoriteCities") ? new Set (JSON.parse(localStorage.getItem("favoriteCities"))) 
                                                                   : new Set();
 
@@ -27,6 +27,9 @@ window.onload = function(){
   }
 }
 
+let formValue = document.querySelector(".search__city");
+formValue.addEventListener("submit", getCityName);
+
 
 function initialFavoriteCities(){
   let currentFavoriteCities = new Set(JSON.parse(localStorage.getItem("favoriteCities")));
@@ -38,7 +41,6 @@ function initialFavoriteCities(){
   })
 
 }
-
 
 //addEventListener on cross
 for (let btn_delete of btn_deletes) {
@@ -221,7 +223,7 @@ function  HandlerFetch (dataName){
   parsedFavoriteCities.delete(delCity)
   localStorage.setItem("favoriteCities", JSON.stringify([...parsedFavoriteCities]));
   favoriteCities = parsedFavoriteCities;
-  let resultNowCity = document.querySelector(".tabcontent-now-city").textContent; // ПОЧЕМУ НЕ РАБОТАЕТ ГЛОБАЛЬНАЯ ПЕРЕМЕННАЯ?!?!
+  let resultNowCity = document.querySelector(".tabcontent-now-city").textContent; 
    
   if (delCity===resultNowCity){
     btn_favorite.classList.remove("active"); 
@@ -322,26 +324,3 @@ function renderFavoriteCities(nowCity){
   document.querySelector(".row__right-close").addEventListener("click", DeleteCityFromAddedLocations);
   document.querySelector(".row__right-city").addEventListener("click", getCityNameFromFavorite);
 }
-/**
-//Tabs 
-function openWeather(evt, tabsSwitch) {
-    // Declare all variables
-    let i, tabcontent, tablinks;
-    // Get all elements with class="row__left-tabcontent" and hide them
-    tabcontent = document.getElementsByClassName("tabcontent");
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
-    }
-    // Get all elements with class="tablinks" and remove the class "active"
-    tablinks = document.getElementsByClassName("tablinks");
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-    // Show the current tab, and add an "active" class to the button that opened the tab
-    document.getElementById(tabsSwitch).style.display = "flex";
-    evt.currentTarget.className += " active";
-  }
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-
-**/
