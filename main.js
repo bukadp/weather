@@ -1,8 +1,8 @@
 import {timeTransform, dateTransform} from "./converters.js";
-//let module = await import('./converters.js');
+import {cookie} from "./cookie.js";
 
 let btn_deletes = document.querySelectorAll(".row__right-close");
-let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
+//let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 const btn_favorite = document.querySelector(".tabcontent-now-fvorite-btn"); 
 const cityFavorites = document.querySelectorAll(".row__right-city");
 let cityFavoriteAdd = document.querySelector(".row__right-locations>ul");
@@ -62,7 +62,8 @@ function clearCurrentForecast(){
 }
 
 //get City from UI form & fetch weather
-function getCityName (){
+function getCityName (e){
+  e.preventDefault()
   let cityName = document.querySelector(".city").value;
       fetchWeather (cityName);
       clearCurrentForecast();
@@ -71,6 +72,7 @@ function getCityName (){
 
 //get City from favorite cities & fetch weather
 function getCityNameFromFavorite(){
+  let cityName = document.querySelector(".city").value;
   cityName = this.textContent;
   fetchWeather(cityName);
   clearCurrentForecast();
@@ -208,12 +210,21 @@ function fetchWeather (cityName){
 function  HandlerFetch (dataName){
   getFavoriteButtonColor(dataName);
   AddCurrentCityInLocalStorage(dataName);
+  cookie(dataName);
 }
 
 //Add Current City In LocalStorage
   function AddCurrentCityInLocalStorage(nameCity){
     localStorage.setItem("CurrentCity", nameCity);
   }
+/**
+  function addCurrentCityInCookie(nameCity) {
+    let dateNow = new Date(Date.now());
+    dateNow.setDate(dateNow.getDate() + 1);
+    let dateExpiresCookies = dateNow.toUTCString();
+    console.log(dateNow);
+    document.cookie = "currentCity=" + nameCity + "; expires=" + dateExpiresCookies;
+  }**/
 
  function DeleteCityFromAddedLocations(){
   this.parentElement.remove();
