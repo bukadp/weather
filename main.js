@@ -62,8 +62,8 @@ function clearCurrentForecast(){
 }
 
 //get City from UI form & fetch weather
-function getCityName (e){
-  e.preventDefault()
+function getCityName (event){
+  event.preventDefault()
   let cityName = document.querySelector(".city").value;
       fetchWeather (cityName);
       clearCurrentForecast();
@@ -111,22 +111,22 @@ function fetchForecast(cityName){
     let resultForecastCity = document.querySelector(".tabcontent-forecast-city");
     resultForecastCity.innerHTML = `${data.city.name}`;
 
-    handlerRender(data.list);
+    handlerRender(data.list, 0);
   })
   
 }
 
 // get ico weather
-function handlerRender(forecastList){
-    
-  forecastList.forEach(function(el){
-
-    let icoNumber = `${el.weather[0].icon}`;
+function handlerRender(forecastList, index){
+    let icoNumber = `${forecastList[index].weather[0].icon}`;
     let ico = document.createElement('img');
     ico.src = `${serverIcoUrl}${icoNumber}.png`;
-    renderForecast(el, ico.src);
+    renderForecast(forecastList[index], ico.src);
 
-  })
+    if (index < forecastList.length){
+      handlerRender(forecastList, index+1);
+    }
+    
 }
 
 //render forecast
@@ -217,14 +217,6 @@ function  HandlerFetch (dataName){
   function AddCurrentCityInLocalStorage(nameCity){
     localStorage.setItem("CurrentCity", nameCity);
   }
-/**
-  function addCurrentCityInCookie(nameCity) {
-    let dateNow = new Date(Date.now());
-    dateNow.setDate(dateNow.getDate() + 1);
-    let dateExpiresCookies = dateNow.toUTCString();
-    console.log(dateNow);
-    document.cookie = "currentCity=" + nameCity + "; expires=" + dateExpiresCookies;
-  }**/
 
  function DeleteCityFromAddedLocations(){
   this.parentElement.remove();
@@ -242,12 +234,10 @@ function  HandlerFetch (dataName){
   else{
     return;
   } 
-
 }
 
   btn_favorite.addEventListener("click", isNew)
   
-
   //toggle favorite btn
   function isNew(){
     btn_favorite.classList.toggle('active')
@@ -260,7 +250,6 @@ function  HandlerFetch (dataName){
     }
   }
 
-
 function DeleteCity(){
   let resultNowCity = document.querySelector(".tabcontent-now-city").textContent;
 
@@ -271,7 +260,6 @@ function DeleteCity(){
     if (resultNowCity==arrFavoriteCities[i].textContent){
       deleteFavoriteCities = arrFavoriteCities[i];
     }
-    
   }
 
   deleteFavoriteCities.parentElement.remove();
@@ -294,7 +282,6 @@ function HandleFavoriteClick(){
 
     localStorage.setItem("favoriteCities", JSON.stringify([...favoriteCities]));
     }
-
 
 // check city in localStorage+  
 function checkToExistCity(city){

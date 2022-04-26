@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Weather forecast</title>
+    <link rel="stylesheet" type="text/css" href="/index.3a01df49.css">
+</head>
+
+<body>
+    <div class="wraper">
+        <div class="search">
+            <form class="search__city">
+                <input class="city" type="text" placeholder="Dnipro">
+                <input class="search__btn" value="" type="submit">
+            </form>
+        </div>
+        <div class="row">
+            <div class="row__left">
+                <div class="row__left-tabcontent">
+                    <!--NOW-->
+                    <div id="now" class="tabcontent">
+                        <div class="tabcontent-now-temp"><span>14</span>&#176;</div>
+                        <div class="tabcontent-now-ico" id="firstIco"><img src="/icons8-cloud-96-1.088cc1ac.svg" alt="weather"></div>
+                        <div class="tabcontent-now-row">
+                            <div class="tabcontent-now-city">Dnipro</div>
+                            <button class="tabcontent-now-fvorite-btn"></button>
+                        </div>
+                    </div>
+
+                    <!--Details-->
+                    <div id="details" class="tabcontent">
+                        <div class="tabcontent-details-city">Dnipro</div>
+                        <div class="tabcontent-details-info">
+                            <ul>
+                                <li class="tabcontent-details-temp">Temperature: <span>14</span>&#176;</li>
+                                <li class="tabcontent-details-feels">Feels like: <span>14</span>&#176;</li>
+                                <li class="tabcontent-details-weather">Weather: <span>Clouds</span></li>
+                                <li class="tabcontent-details-sunrise">Sunrise: <span>03:21</span></li>
+                                <li class="tabcontent-details-sunset">Sunset: <span>18:54</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!--Forecast-->
+                    <div id="forecast" class="tabcontent">
+                        <div class="tabcontent-forecast-city">Dnipro</div>
+                        <div class="tabcontent-forecast-info">
+                            <div id="forecastWeather"></div>
+                        </div>
+                        
+                    </div>
+
+
+                </div>
+                <div class="row__left-tabs">
+                    <button class="tablinks active" id="defaultOpen" onclick="openWeather(event, 'now')">Now</button>
+                    <button class="tablinks" onclick="openWeather(event, 'details')">Details</button>
+                    <button class="tablinks" onclick="openWeather(event, 'forecast')">Forecast</button>
+                </div>
+            </div>
+            <div class="row__right">
+                <div class="row__right-added">Added Locations:</div>
+                <div class="row__right-locations">
+                    <ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/index.63aff760.js" defer=""></script>
+    <script src="/index.7f9af00b.js"></script>
+</body>
+
+</html>
